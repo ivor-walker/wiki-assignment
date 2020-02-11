@@ -1,0 +1,8 @@
+<h2>Edit article</h2><br>
+<form action="/article/<%= @n.name %>" method="post" id="edit">
+	<input type="hidden" name="_method" value="put">
+	<input type="text" name="name" value=<%= @n.name %> readonly="readonly"><br>
+	<textarea rows="20" cols="90" name="body"><%= @n.body %></textarea>
+	<input type="submit" value="Update">
+</form>
+<p><a href="/">Cancel</a></p>

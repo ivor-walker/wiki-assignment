@@ -1,4 +1,8 @@
 <h2>Admin controls page</h2>
+<form action="/article" method="post">
+		<input type="hidden" name="_method" value="delete">
+		<input type="submit" value="Reset wiki to initial state with no articles">
+</form>
 <p><b>User list</b></p><br>
 <p>Username - DateJoined - Edit?</p><br>
 <% @list2.each do |liste| %>

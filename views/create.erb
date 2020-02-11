@@ -1,4 +1,8 @@
-<h2>This is your own personal create page!</h2>
-<section id="add">
-<p><%= $myinfo %></p>
-</section>
+<h2>Create article</h2><br>
+<form action="/create" method="post" id="create">
+	Article name:<br>
+	<input type="text" name="name"><br>
+	<textarea rows="20" cols="90" name="body"></textarea>
+	<input type="submit" value="Create">
+</form>
+<p><a href="/">Cancel</a></p>

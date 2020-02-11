@@ -12,6 +12,12 @@ class User < ActiveRecord::Base
 	validates :password, presence: true
 end
 
+class Article < ActiveRecord::Base
+	validates :name, presence: true
+	validates :body, presence: true
+	validates :date, presence: true
+end
+
 helpers do
 	def protected!
 		if authorized?
@@ -70,6 +76,20 @@ get '/create' do
 	erb :create
 end
 
+post '/create' do
+	#do not create a new article if one with the same name already exists
+	if Article.exists?(["lower(name) = ?", params[:name].downcase])
+		erb :articleexists
+	else
+		n = Article.new
+		n.name = params[:name]
+		n.body = params[:body]
+		n.date = Time.now
+		n.save
+		redirect "/article/" + params[:name]
+	end
+end
+
 get '/edit' do
 	info = ""
 	file = File.open("wiki.txt")
@@ -119,7 +139,7 @@ get '/createaccount' do
 end
 
 post '/createaccount' do 
-	n=User.new
+	n = User.new
 	n.username = params[:username]
 	n.password = params[:password]
 	if n.username == "Admin"
@@ -178,6 +198,112 @@ get '/user/delete/:uzer' do
 		n.destroy
 		@list2 = User.all.sort_by { |u| [u.id] }
 		erb :admincontrols
+	end
+end
+
+get '/nochange' do
+	erb :articlenochange
+end
+
+# delete all articles and their old versions
+delete '/article' do
+	Article.delete_all
+	redirect '/'
+end
+
+get '/article/:articlename' do
+	@n = Article
+		.where("lower(name) = ?", params[:articlename].downcase)
+		.order("date DESC")
+		.to_a.first
+	if !@n
+		status 404
+		redirect '/notfound'
+	else
+		erb :article
+	end
+end
+
+put '/article/:articlename' do
+	oldBody = Article
+		.where("lower(name) = ?", params[:articlename].downcase)
+		.order("date DESC")
+		.to_a.first.body
+		
+	# do not update if the article's body is the same as the latest one
+	if params[:body] == oldBody
+		redirect '/nochange'
+	else
+		n = Article.new
+		n.name = params[:name]
+		n.body = params[:body]
+		n.date = Time.now
+		n.save
+		redirect '/article/' + params[:name]
+	end
+end
+
+get '/article/:articlename/edit' do
+	@n = Article
+		.where("lower(name) = ?", params[:articlename].downcase)
+		.order("date DESC")
+		.to_a.first
+		
+	if !@n
+		status 404
+		redirect '/notfound'
+	else
+		erb :articleedit
+	end
+end
+
+get '/history/:articlename' do
+	@arr = Article
+		.where("lower(name) = ?", params[:articlename].downcase)
+		.order("date DESC")
+		.to_a
+		
+	if @arr.length == 0
+		status 404
+		redirect '/notfound'
+	else
+		erb :history
+	end
+end
+
+#delete specific article and all of its versions
+delete '/history/:articlename' do
+	Article.where("lower(name) = ?", params[:articlename].downcase).destroy_all
+	redirect '/'
+end
+
+#delete all specified article versions from newest to selected, exclusive
+delete '/history/:articlename/deleteto/:id' do
+	date = Article
+		.where("lower(name) = ?", params[:articlename].downcase)
+		.where(:id => params[:id])
+		.to_a.first.date
+		
+	Article
+		.where("lower(name) = ?", params[:articlename].downcase)
+		.where("date > ?", date)
+		.destroy_all
+	redirect '/history/'+params[:articlename]
+end
+
+get '/history/:articlename/:id' do
+	@n = Article
+		.where("lower(name) = ?", params[:articlename].downcase)
+		.where(:id => params[:id])
+		.to_a.first
+		
+	if !@n
+		status 404
+		redirect '/notfound'
+	else
+		# track if user is viewing history of article instead of standard article page
+		@viewingHistory = true
+		erb :article
 	end
 end
 

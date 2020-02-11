@@ -1,0 +1,10 @@
+<h2><%= @n.name %></h2>
+<span><%= @n.date %></span>
+<%# do not show edit functionality if viewing history of article %>
+<% if !@viewingHistory %>
+	<a href="/article/<%= @n.name %>/edit">Edit</a> | 
+<% end %>
+<a href="/history/<%= @n.name %>">History</a>
+<section>
+<%= @n.body %>
+</section>
