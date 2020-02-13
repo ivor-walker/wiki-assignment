@@ -1,27 +1,87 @@
-<h2><%= @arr[0].name %></h2>
-<form action="/history/<%= @arr[0].name %>" method="post">
-	<input type="hidden" name="_method" value="delete">
-	<input type="submit" value="Delete Article">
-</form>
-<form action="/history/<%= @arr[@arr.length-1].name %>/deleteto/<%= @arr[@arr.length-1].id %>" method="post">
-	<input type="hidden" name="_method" value="delete">
-	<input type="submit" value="Reset to original state">
-</form>
+<script>
+	//hide the bodies of all articles on history page
+	function hideShowAll(event) {
+			bodies = document.getElementsByClassName("history-article-body");
+			checkboxes = document.getElementsByClassName("article-checkbox");
+			
+			if (event.target.checked) {
+				for(i = 0; i < bodies.length; i++) {
+					bodies[i].style.display="none";
+				}
+				for(i = 0; i < checkboxes.length; i++) {
+					checkboxes[i].checked = true;
+				}
+			} else {
+				for(i = 0; i < bodies.length; i++) {
+					bodies[i].style.display="block";
+				}
+				for(i = 0; i < checkboxes.length; i++) {
+					checkboxes[i].checked = false;
+				}
+			}
+	}
+	
+	//hide the body of the selected article version
+	function hideShow(event) {
+			body = document.getElementById(event.target.dataset.id);
+			allArticlesCheckbox = document.getElementById("all-articles-checkbox");
+			if(allArticlesCheckbox.checked)
+				allArticlesCheckbox.checked = false
+			if (event.target.checked) {
+					body.style.display="none";
+			} else {
+					body.style.display="block";
+			}
+	}
+</script>
 
-<b><a href="/article/<%= @arr[0].name %>"><%= @arr[0].date %></a></b> -
-<span><%= @arr[0].author %></span>
-<p>Current</p>
-<p><%= @arr[0].body %></p>
-<hr>
+<div id="history-controls">
+	<h2><%= @arr[0].name %></h2>
+	<form action="/history/<%= @arr[0].name %>" method="post">
+		<input type="hidden" name="_method" value="delete">
+		<input type="submit" value="Delete Article">
+	</form>
+	<form action="/history/<%= @arr[@arr.length-1].name %>/deleteto/<%= @arr[@arr.length-1].id %>" method="post">
+		<input type="hidden" name="_method" value="delete">
+		<input type="submit" value="Reset to original state">
+	</form>
+	<input type="checkbox" onclick="hideShowAll(event)" id="all-articles-checkbox">Hide all version bodies
+</div>
+
+<div class="history-article">
+	<div class="history-article-controls">
+		<b><a href="/article/<%= @arr[0].name %>"><%= @arr[0].date %></a></b> -
+		<span><%= @arr[0].author %></span>
+		<span> - Current Version</span>
+		<br>
+		<input 
+			type="checkbox"
+			onclick="hideShow(event)"
+			class="article-checkbox"
+			data-id="id-<%= @arr[0].id %>"> 
+			Hide body
+	</div>
+	<p class="history-article-body" id="id-<%= @arr[0].id %>"><%= @arr[0].body %></p>
+</div>
 
 <%# separate versions other than latest one for extra functionality, like rollback%>
 <% @arr.drop(1).each do |article| %>
-	<b><a href="/history/<%= article.name %>/<%= article.id %>"><%= article.date %></a></b> -
-	<span><%= article.author %></span>
-	<form action="/history/<%= article.name %>/deleteto/<%= article.id %>" method="post">
-		<input type="hidden" name="_method" value="delete">
-		<input type="submit" value="Permanently rollback to this version">
-	</form>
-	<p><%= article.body %></p>
-	<hr>
+	<div class="history-article">
+		<div class="history-article-controls">
+			<b><a href="/history/<%= article.name %>/<%= article.id %>"><%= article.date %></a></b> -
+			<span><%= article.author %></span>
+			<br>
+			<input 
+				type="checkbox"
+				onclick="hideShow(event)"
+				class="article-checkbox"
+				data-id="id-<%= article.id %>">
+				Hide body
+			<form action="/history/<%= article.name %>/deleteto/<%= article.id %>" method="post">
+				<input type="hidden" name="_method" value="delete">
+				<input type="submit" value="Permanently rollback to this version">
+			</form>
+		</div>
+		<p class="history-article-body" id="id-<%= article.id %>"><%= article.body %></p>
+	</div>
 <% end %>

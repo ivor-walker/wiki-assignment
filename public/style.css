@@ -31,3 +31,41 @@ div.navbar {
 div.view_content {
 	min-height: 800px;
 }
+
+div#history-controls {
+	border-bottom: 1px solid black;
+	padding-bottom: 5px;
+}
+
+div#history-controls form {
+	display: inline;
+	margin-right: 0;
+}
+
+div.history-article {
+	border-bottom: 1px solid black;
+	padding-top: 5px;
+}
+
+div.history-article form {
+	display: inline;
+}
+
+div.history-article-controls {
+	padding-left: 5px;
+}
+
+p.history-article-body {
+	white-space: pre-line;
+	background-color: #EEEEEE;
+	margin-bottom: 0;
+	margin-top: 5px;
+	padding: 5px 10px 5px 10px;
+}
+
+p.article-body {
+	white-space: pre-line;
+	background-color: #EEEEEE;
+	min-height: 700px;
+	padding: 10px 15px 0 15px;
+}
