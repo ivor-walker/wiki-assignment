@@ -85,6 +85,11 @@ post '/create' do
 		n.name = params[:name]
 		n.body = params[:body]
 		n.date = Time.now
+		if $credentials != nil
+			n.author = $credentials[0]
+		else
+			n.author = ""
+		end
 		n.save
 		redirect "/article/" + params[:name]
 	end
@@ -238,6 +243,11 @@ put '/article/:articlename' do
 		n.name = params[:name]
 		n.body = params[:body]
 		n.date = Time.now
+		if $credentials != nil
+			n.author = $credentials[0]
+		else
+			n.author = ""
+		end
 		n.save
 		redirect '/article/' + params[:name]
 	end

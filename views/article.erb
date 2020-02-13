@@ -1,5 +1,6 @@
 <h2><%= @n.name %></h2>
-<span><%= @n.date %></span>
+<span><%= @n.date %></span> -
+<span><%= @n.author %></span>
 <%# do not show edit functionality if viewing history of article %>
 <% if !@viewingHistory %>
 	<a href="/article/<%= @n.name %>/edit">Edit</a> | 
