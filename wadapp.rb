@@ -14,7 +14,7 @@ end
 
 class Article < ActiveRecord::Base
 	validates :name, presence: true
-	validates :body, presence: true
+	validates :body, presence: true, allow_blank: true
 	validates :date, presence: true
 end
 
