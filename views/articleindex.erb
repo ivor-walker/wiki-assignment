@@ -1,0 +1,8 @@
+<% if @arr.length == 0 %>
+	<p>No articles have been created yet.</p>
+<% end %>
+<ul>
+<% @arr.each do |article| %>
+	<li><a href="/article/<%= article.name%>"><%= article.name%></a></li>
+<% end %>
+</ul>

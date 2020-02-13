@@ -68,6 +68,16 @@ get '/' do
 	erb :home
 end
 
+get '/index' do
+	#get articles with no repeating names and only the name column
+	@arr = Article
+		.select("DISTINCT name")
+		.order("name ASC")
+		.to_a
+		
+	erb :articleindex
+end
+
 get '/about' do
 	erb :about
 end
