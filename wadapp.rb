@@ -40,6 +40,13 @@ helpers do
 			end
 		end
 	end
+	
+	def log! # initialises log helper
+		myUser = User.where(:username => $credentials[0]).to_a.first # looks up the user who did the action in the db
+		File.open('log.txt', 'a') do |f| # appends to text file 'log.txt'
+			f.puts "<tr><th>#{Time.now}#{request.path}</th><th>#{myUser.username}</th><th>#{myUser.edit}}</th></tr>" # logs time, the action the user took (i.e the path), the username and whether he has edit rights or not
+		end
+	end
 end
 
 $myinfo = ""
@@ -185,6 +192,15 @@ get '/admincontrols' do
 	protected!
 	@list2 = User.all.sort_by { |u| [u.id] }
 	erb :admincontrols
+end
+
+get '/log' do
+	n="" # initialises variable 'n'
+	File.open('log.txt') do |f| # opens log.txt
+		n = @n + f # pushes every line of 'log.txt' to variable "n"
+	end
+	@n=n # sends variable 'n' to the view. at this point, 'n' contains a set of rows and columns that can be put directly into a HTML table
+	erb :log
 end
 
 get '/user/:uzer' do
